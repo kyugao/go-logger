@@ -138,11 +138,30 @@ func Debug(v ...interface{}) {
 
 	if logLevel <= DEBUG {
 		if logObj != nil {
-			logObj.lg.Output(2, fmt.Sprintln("debug", v))
+			logObj.lg.Output(2, fmt.Sprintln("DEBUG", v))
 		}
-		console("debug", v)
+		console("DEBUG", v)
 	}
 }
+func Debugf(format string, v ...interface{}) {
+	if dailyRolling {
+		fileCheck()
+	}
+	defer catchError()
+	if logObj != nil {
+		logObj.mu.RLock()
+		defer logObj.mu.RUnlock()
+	}
+
+	if logLevel <= DEBUG {
+		content := []interface{}{fmt.Sprintf(format, v...)}
+		if logObj != nil {
+			logObj.lg.Output(2, fmt.Sprintln("DEBUG", content))
+		}
+		console("DEBUG", content)
+	}
+}
+
 func Info(v ...interface{}) {
 	if dailyRolling {
 		fileCheck()
@@ -154,11 +173,30 @@ func Info(v ...interface{}) {
 	}
 	if logLevel <= INFO {
 		if logObj != nil {
-			logObj.lg.Output(2, fmt.Sprintln("info", v))
+			logObj.lg.Output(2, fmt.Sprintln("INFO", v))
 		}
-		console("info", v)
+		console("INFO", v)
 	}
 }
+
+func Infof(format string, v ...interface{}) {
+	if dailyRolling {
+		fileCheck()
+	}
+	defer catchError()
+	if logObj != nil {
+		logObj.mu.RLock()
+		defer logObj.mu.RUnlock()
+	}
+	if logLevel <= INFO {
+		content := []interface{}{fmt.Sprintf(format, v...)}
+		if logObj != nil {
+			logObj.lg.Output(2, fmt.Sprintln("INFO", content))
+		}
+		console("INFO", content)
+	}
+}
+
 func Warn(v ...interface{}) {
 	if dailyRolling {
 		fileCheck()
@@ -171,11 +209,31 @@ func Warn(v ...interface{}) {
 
 	if logLevel <= WARN {
 		if logObj != nil {
-			logObj.lg.Output(2, fmt.Sprintln("warn", v))
+			logObj.lg.Output(2, fmt.Sprintln("WARN", v))
 		}
-		console("warn", v)
+		console("WARN", v)
 	}
 }
+
+func Warnf(format string, v ...interface{}) {
+	if dailyRolling {
+		fileCheck()
+	}
+	defer catchError()
+	if logObj != nil {
+		logObj.mu.RLock()
+		defer logObj.mu.RUnlock()
+	}
+
+	if logLevel <= WARN {
+		content := []interface{}{fmt.Sprintf(format, v...)}
+		if logObj != nil {
+			logObj.lg.Output(2, fmt.Sprintln("WARN", content))
+		}
+		console("WARN", content)
+	}
+}
+
 func Error(v ...interface{}) {
 	if dailyRolling {
 		fileCheck()
@@ -187,11 +245,30 @@ func Error(v ...interface{}) {
 	}
 	if logLevel <= ERROR {
 		if logObj != nil {
-			logObj.lg.Output(2, fmt.Sprintln("error", v))
+			logObj.lg.Output(2, fmt.Sprintln("ERROR", v))
 		}
-		console("error", v)
+		console("ERROR", v)
 	}
 }
+
+func Errorf(format string, v ...interface{}) {
+	if dailyRolling {
+		fileCheck()
+	}
+	defer catchError()
+	if logObj != nil {
+		logObj.mu.RLock()
+		defer logObj.mu.RUnlock()
+	}
+	if logLevel <= ERROR {
+		content := []interface{}{fmt.Sprintf(format, v...)}
+		if logObj != nil {
+			logObj.lg.Output(2, fmt.Sprintln("ERROR", content))
+		}
+		console("ERROR", content)
+	}
+}
+
 func Fatal(v ...interface{}) {
 	if dailyRolling {
 		fileCheck()
@@ -203,9 +280,27 @@ func Fatal(v ...interface{}) {
 	}
 	if logLevel <= FATAL {
 		if logObj != nil {
-			logObj.lg.Output(2, fmt.Sprintln("fatal", v))
+			logObj.lg.Output(2, fmt.Sprintln("FATAL", v))
 		}
-		console("fatal", v)
+		console("FATAL", v)
+	}
+}
+
+func Fatalf(format string, v ...interface{}) {
+	if dailyRolling {
+		fileCheck()
+	}
+	defer catchError()
+	if logObj != nil {
+		logObj.mu.RLock()
+		defer logObj.mu.RUnlock()
+	}
+	if logLevel <= FATAL {
+		content := []interface{}{fmt.Sprintf(format, v...)}
+		if logObj != nil {
+			logObj.lg.Output(2, fmt.Sprintln("FATAL", content))
+		}
+		console("FATAL", content)
 	}
 }
 

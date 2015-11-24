@@ -1,7 +1,7 @@
 package example
 
 import (
-	"github.com/donnie4w/go-logger/logger"
+	"github.com/kyugao/go-logger/logger"
 	"runtime"
 	"strconv"
 	"testing"
@@ -10,6 +10,7 @@ import (
 
 func log(i int) {
 	logger.Debug("Debug>>>>>>>>>>>>>>>>>>>>>>" + strconv.Itoa(i))
+	logger.Debugf(">>>>>>>>>>>>>>>>>>>>>>%s", strconv.Itoa(i))
 	logger.Info("Info>>>>>>>>>>>>>>>>>>>>>>>>>" + strconv.Itoa(i))
 	logger.Warn("Warn>>>>>>>>>>>>>>>>>>>>>>>>>" + strconv.Itoa(i))
 	logger.Error("Error>>>>>>>>>>>>>>>>>>>>>>>>>" + strconv.Itoa(i))
@@ -36,9 +37,9 @@ func Test(t *testing.T) {
 
 	//指定日志级别  ALL，DEBUG，INFO，WARN，ERROR，FATAL，OFF 级别由低到高
 	//一般习惯是测试阶段为debug，生成环境为info以上
-	logger.SetLevel(logger.ERROR)
+	logger.SetLevel(logger.ALL)
 
-	for i := 10000; i > 0; i-- {
+	for i := 10; i > 0; i-- {
 		go log(i)
 		time.Sleep(1000 * time.Millisecond)
 	}
