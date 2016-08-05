@@ -16,7 +16,6 @@ func writeLog(i int) {
 }
 
 func Test(t *testing.T) {
-	InitLogger("./logger_config.conf")
 
 	for i := 3; i > 0; i-- {
 		go writeLog(i)

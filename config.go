@@ -2,51 +2,37 @@ package logger
 
 import (
 	"os"
-	"github.com/stvp/go-toml-config"
+	"github.com/kyugao/gy.util.json"
 )
 
-var (
-	logPath string
-	logFile string
-	enableConsole bool
-	level LEVEL
-)
-
-func InitLogger(path string) {
-	Infof("Init logger with given config file %s", path)
-	loadConfig(path)
-	_, err := os.Stat(logPath)
-	if !os.IsExist(err) {
-		err = os.MkdirAll(logPath, os.ModePerm)
-	}
-
-	SetConsole(enableConsole)
-	SetRollingDaily(logPath, logFile)
-	SetLevel(level)
-
-	if err != nil {
-		Fatal("Init log path error", err)
-	} else {
-		Info("Log path initialised.")
-	}
+var Config struct {
+	LogPath       string
+	LogFile       string
+	EnableConsole bool
+	Level         string
 }
 
-func loadConfig(path string) {
-	logConfig := config.NewConfigSet("logConfig", config.ExitOnError)
-	logConfig.StringVar(&logPath, "log_path", "./default_logs/")
-	logConfig.StringVar(&logFile, "log_file", "default.log")
-	var tempLevelStr string
-	logConfig.StringVar(&tempLevelStr, "log_level", "INFO")
-	logConfig.BoolVar(&enableConsole, "enable_console", false)
-
-	err := logConfig.Parse(path)
+func init() {
+	err := ujson.FromFile("conf/logger.json", &Config)
 	if err != nil {
-		Warnf("load logger config error, %v", err)
-	} else {
-		Infof("loaded logger config level = %d", level)
+		Error("load logger config error %s.\n", ujson.ToJsonString(err))
+		panic(err)
 	}
 
-	switch tempLevelStr {
+	_, err = os.Stat(Config.LogPath)
+	if !os.IsExist(err) {
+		Debug("Log path missing, create.")
+		err = os.MkdirAll(Config.LogPath, os.ModePerm)
+		if err != nil {
+			Fatal("Create log path error", err)
+			panic(err)
+		}
+	} else {
+		Debug("Log path exists, skip.")
+	}
+
+	var level LEVEL
+	switch Config.Level {
 	case "ALL":
 		level = ALL
 	case "DEBUG":
@@ -62,5 +48,7 @@ func loadConfig(path string) {
 	case "OFF":
 		level = OFF
 	}
-
+	SetLevel(level)
+	SetConsole(Config.EnableConsole)
+	SetRollingDaily(Config.LogPath, Config.LogFile)
 }

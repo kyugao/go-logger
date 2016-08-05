@@ -67,30 +67,6 @@ func SetLevel(_level LEVEL) {
 	logLevel = _level
 }
 
-func SetRollingFile(fileDir, fileName string, maxNumber int32, maxSize int64, _unit UNIT) {
-	maxFileCount = maxNumber
-	maxFileSize = maxSize * int64(_unit)
-	RollingFile = true
-	dailyRolling = false
-	logObj = &_FILE{dir: fileDir, filename: fileName, isCover: false, mu: new(sync.RWMutex)}
-	logObj.mu.Lock()
-	defer logObj.mu.Unlock()
-	for i := 1; i <= int(maxNumber); i++ {
-		if isExist(fileDir + "/" + fileName + "." + strconv.Itoa(i)) {
-			logObj._suffix = i
-		} else {
-			break
-		}
-	}
-	if !logObj.isMustRename() {
-		logObj.logfile, _ = os.OpenFile(fileDir+"/"+fileName, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0666)
-		logObj.lg = log.New(logObj.logfile, "", log.Ldate|log.Ltime|log.Lshortfile)
-	} else {
-		logObj.rename()
-	}
-	go fileMonitor()
-}
-
 func SetRollingDaily(fileDir, fileName string) {
 	RollingFile = false
 	dailyRolling = true
@@ -373,16 +349,6 @@ func fileSize(file string) int64 {
 func isExist(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil || os.IsExist(err)
-}
-
-func fileMonitor() {
-	timer := time.NewTicker(1 * time.Second)
-	for {
-		select {
-		case <-timer.C:
-			fileCheck()
-		}
-	}
 }
 
 func fileCheck() {

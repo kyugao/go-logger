@@ -1,0 +1,6 @@
+{
+  "LogPath":"logs",
+  "LogFile":"temp.log",
+  "EnableConsole":true,
+  "Level":"ALL"
+}
